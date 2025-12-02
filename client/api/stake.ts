@@ -1,6 +1,6 @@
 // /api/stake.ts
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { fetchLiveOdds, convertOddsToPools } from "../src/api/odds";
+import { fetchLiveOdds, convertOddsToPools } from "./odds";
 
 const stakes: Record<string, Record<string, number>> = {};
 

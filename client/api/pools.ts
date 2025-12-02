@@ -1,6 +1,6 @@
 // /api/pools.ts
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { fetchLiveOdds, convertOddsToPools } from "../src/api/odds";
+import { fetchLiveOdds, convertOddsToPools } from "./odds";
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {

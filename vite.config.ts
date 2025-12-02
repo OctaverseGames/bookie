@@ -2,11 +2,13 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
+import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 import { metaImagesPlugin } from "./vite-plugin-meta-images";
 
 export default defineConfig({
   plugins: [
     react(),
+    runtimeErrorOverlay(),
     tailwindcss(),
     metaImagesPlugin(),
   ],
@@ -17,22 +19,15 @@ export default defineConfig({
       "@assets": path.resolve(__dirname, "attached_assets"),
     },
   },
-  css: {
-    postcss: {
-      plugins: [],
-    },
-  },
   root: path.resolve(__dirname, "client"),
   build: {
-    outDir: path.resolve(__dirname, "dist/public"),
+    outDir: path.resolve(__dirname, "dist"), // <-- changed to 'dist'
     emptyOutDir: true,
   },
   server: {
     host: "0.0.0.0",
-    allowedHosts: true,
     fs: {
       strict: true,
-      deny: ["**/.*"],
     },
   },
 });
