@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Bookie – Crypto Sports Betting</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg: #050816;
+      --bg-elevated: #0b1020;
+      --accent: #4f46e5;
+      --accent-soft: rgba(79, 70, 229, 0.15);
+      --accent-alt: #22c55e;
+      --border-subtle: #1f2937;
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --danger: #ef4444;
+      --radius-lg: 16px;
+      --radius-md: 10px;
+      --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at top left, #1e293b 0, #020617 55%);
+      color: var(--text-main);
+      min-height: 100vh;
+    }
+
+    .app {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    /* Header */
+
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding: 14px 18px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(
+          135deg,
+          rgba(148, 163, 184, 0.05),
+          rgba(15, 23, 42, 0.85)
+        ),
+        radial-gradient(circle at top right, rgba(79, 70, 229, 0.35), transparent);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      box-shadow: var(--shadow-soft);
+      gap: 14px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: conic-gradient(
+        from 120deg,
+        #22c55e,
+        #22d3ee,
+        #4f46e5,
+        #22c55e
+      );
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0b1020;
+      font-weight: 800;
+      font-size: 18px;
+      box-shadow: 0 0 20px rgba(79, 70, 229, 0.5);
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .logo-title {
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      font-size: 18px;
+      text-transform: uppercase;
+    }
+
+    .logo-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .network-pill,
+    .balance-pill {
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-muted);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.9);
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      font-size: 13px;
+      padding: 8px 14px;
+      font-weight: 500;
+      transition: all 0.16s ease-out;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #4f46e5, #22c55e);
+      color: white;
+      box-shadow: 0 10px 25px rgba(79, 70, 229, 0.6);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px) scale(1.01);
+      box-shadow: 0 18px 40px rgba(79, 70, 229, 0.8);
+    }
+
+    .btn-ghost {
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      color: var(--text-main);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(15, 23, 42, 1);
+      border-color: rgba(148, 163, 184, 0.6);
+    }
+
+    /* Main layout */
+
+    .main {
+      display: grid;
+      grid-template-columns: 2.1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 960px) {
+      .main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      border-radius: var(--radius-lg);
+      background: radial-gradient(circle at top left, #020617, #020617);
+      border: 1px solid var(--border-subtle);
+      padding: 14px 16px 16px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      gap: 10px;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      color: var(--text-muted);
+    }
+
+    /* Top nav */
+
+    .top-nav {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .top-nav button {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid transparent;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), #020617);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.16s ease-out;
+    }
+
+    .top-nav button.active {
+      color: var(--text-main);
+      border-color: rgba(79, 70, 229, 0.8);
+      background: linear-gradient(
+        135deg,
+        rgba(79, 70, 229, 0.3),
+        rgba(34, 197, 94, 0.15)
+      );
+      box-shadow: 0 0 20px rgba(79, 70, 229, 0.4);
+    }
+
+    /* Sports toggle */
+
+    .sports-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .sports-tab {
+      padding: 6px 11px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      color: var(--text-muted);
+      background: rgba(15, 23, 42, 0.95);
+      cursor: pointer;
+      transition: all 0.16s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sports-tab span.icon {
+      font-size: 14px;
+    }
+
+    .sports-tab.active {
+      color: var(--text-main);
+      border-color: rgba(79, 70, 229, 0.9);
+      background: radial-gradient(
+        circle at top left,
+        rgba(79, 70, 229, 0.35),
+        rgba(15, 23, 42, 0.95)
+      );
+      box-shadow: 0 0 18px rgba(79, 70, 229, 0.6);
+    }
+
+    .sports-tab:hover {
+      border-color: rgba(148, 163, 184, 0.7);
+    }
+
+    .sports-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: 11px;
+      color: var(--text-muted);
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .sports-meta strong {
+      color: var(--accent-alt);
+      font-weight: 600;
+    }
+
+    /* Games list */
+
+    .games-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .game-row {
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, #020617, #020617);
+      border: 1px solid rgba(15, 23, 42, 1);
+      padding: 8px 10px;
+      display: grid;
+      grid-template-columns: minmax(0, 2.2fr) minmax(0, 2.2fr) minmax(0, 2.4fr);
+      align-items: center;
+      column-gap: 10px;
+      row-gap: 6px;
+    }
+
+    @media (max-width: 720px) {
+      .game-row {
+        grid-template-columns: minmax(0, 1.8fr) minmax(0, 2fr);
+        grid-template-rows: auto auto;
+      }
+      .game-odds {
+        grid-column: 1 / -1;
+      }
+    }
+
+    .game-teams {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .game-league {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .team-names {
+      font-size: 13px;
+    }
+
+    .team-names span {
+      display: block;
+    }
+
+    .game-time {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .game-extra {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .tag-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(220, 38, 38, 0.1);
+      border: 1px solid rgba(248, 113, 113, 0.7);
+      color: #fecaca;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      width: fit-content;
+    }
+
+    .tag-live span.dot-live {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--danger);
+      box-shadow: 0 0 8px rgba(248, 113, 113, 0.9);
+    }
+
+    .game-odds {
+      display: flex;
+      gap: 6px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .odds-pill {
+      min-width: 70px;
+      border-radius: 999px;
+      padding: 4px 8px 5px;
+      font-size: 12px;
+      border: 1px solid rgba(55, 65, 81, 1);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .odds-pill-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 2px;
+    }
+
+    .odds-pill-value {
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .odds-pill:hover {
+      border-color: rgba(79, 70, 229, 0.9);
+      box-shadow: 0 0 15px rgba(79, 70, 229, 0.55);
+      transform: translateY(-1px);
+    }
+
+    .odds-pill.selected {
+      border-color: rgba(79, 70, 229, 0.95);
+      background: radial-gradient(
+        circle at top left,
+        rgba(79, 70, 229, 0.3),
+        rgba(15, 23, 42, 1)
+      );
+    }
+
+    /* Sidebar / bet slip */
+
+    .betslip {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .betslip-body {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .betslip-empty {
+      font-size: 12px;
+      color: var(--text-muted);
+      padding: 8px 10px;
+      border-radius: var(--radius-md);
+      border: 1px dashed rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.6);
+    }
+
+    .betslip-item {
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(55, 65, 81, 1);
+      background: rgba(15, 23, 42, 0.98);
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      font-size: 12px;
+    }
+
+    .betslip-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .betslip-item-title {
+      font-weight: 500;
+      font-size: 12px;
+    }
+
+    .betslip-item-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .remove-btn {
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .betslip-footer {
+      border-top: 1px solid rgba(31, 41, 55, 1);
+      padding-top: 8px;
+      margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .stake-input {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+    }
+
+    .stake-input input {
+      flex: 1;
+      border-radius: 999px;
+      border: 1px solid rgba(55, 65, 81, 1);
+      background: rgba(15, 23, 42, 0.98);
+      padding: 6px 9px;
+      color: var(--text-main);
+      font-size: 12px;
+      outline: none;
+    }
+
+    .stake-input input:focus {
+      border-color: rgba(79, 70, 229, 0.95);
+      box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.35);
+    }
+
+    .betslip-totals {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .betslip-totals strong {
+      color: var(--accent-alt);
+    }
+
+    /* Pools section */
+
+    .pools-card {
+      margin-top: 10px;
+    }
+
+    .pools-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .pools-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    @media (max-width: 720px) {
+      .pools-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .pool-card {
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(31, 41, 55, 1);
+      background: linear-gradient(
+        135deg,
+        rgba(79, 70, 229, 0.2),
+        rgba(15, 23, 42, 0.98)
+      );
+      padding: 9px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
+    }
+
+    .pool-title {
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .pool-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .progress {
+      width: 100%;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 1);
+      overflow: hidden;
+      margin: 2px 0 4px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, #22c55e, #4f46e5);
+      width: 60%;
+    }
+
+    .pool-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: var(--text-muted);
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pool-footer .btn-ghost {
+      padding: 5px 9px;
+      font-size: 11px;
+    }
+
+    /* Modal */
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 30;
+    }
+
+    .modal {
+      width: min(420px, 92vw);
+      border-radius: var(--radius-lg);
+      background: #020617;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      padding: 14px 16px 16px;
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .modal h3 {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .modal-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 12px;
+    }
+
+    .modal-row label {
+      color: var(--text-muted);
+    }
+
+    .modal-row input,
+    .modal-row select {
+      border-radius: 999px;
+      border: 1px solid rgba(55, 65, 81, 1);
+      background: rgba(15, 23, 42, 0.98);
+      padding: 7px 10px;
+      color: var(--text-main);
+      font-size: 12px;
+      outline: none;
+    }
+
+    .modal-row input:focus,
+    .modal-row select:focus {
+      border-color: rgba(79, 70, 229, 0.95);
+      box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.35);
+    }
+
+    .modal-actions {
+      margin-top: 4px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .close-modal {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- HEADER -->
+    <header class="app-header">
+      <div class="logo">
+        <div class="logo-icon">B</div>
+        <div class="logo-text">
+          <div class="logo-title">Bookie</div>
+          <div class="logo-subtitle">Crypto Sportsbook & Pools</div>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="network-pill">
+          <span class="dot"></span>
+          <span>Solana Mainnet</span>
+        </div>
+        <div class="balance-pill">
+          <span>Balance:</span><strong> 2.40 SOL</strong>
+        </div>
+        <button class="btn btn-ghost">
+          <span>⚡</span>
+          <span>Quick Deposit</span>
+        </button>
+        <button class="btn btn-primary">
+          <span>🔗</span>
+          <span>Connect Wallet</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="main">
+      <!-- LEFT: Sports & Pools -->
+      <section>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              📊 Live & Upcoming
+              <span class="badge">Single Bets · Parlays</span>
+            </div>
+            <div class="top-nav">
+              <button class="active">Games</button>
+              <button>My Bets</button>
+              <button>History</button>
+            </div>
+          </div>
+
+          <!-- Sports tabs -->
+          <div class="sports-tabs" id="sportsTabs">
+            <button class="sports-tab active" data-sport="soccer">
+              <span class="icon">⚽</span><span>Soccer</span>
+            </button>
+            <button class="sports-tab" data-sport="nfl">
+              <span class="icon">🏈</span><span>NFL</span>
+            </button>
+            <button class="sports-tab" data-sport="hockey">
+              <span class="icon">🏒</span><span>Hockey</span>
+            </button>
+            <button class="sports-tab" data-sport="basketball">
+              <span class="icon">🏀</span><span>Basketball</span>
+            </button>
+          </div>
+
+          <div class="sports-meta">
+            <span>
+              Showing <strong>featured matches</strong> · Odds in decimal · Lines auto-refresh
+            </span>
+            <span>Min bet 0.01 SOL · Max win 50 SOL</span>
+          </div>
+
+          <!-- Games container -->
+          <div id="gamesContainer" class="games-list">
+            <!-- Default: Soccer games -->
+          </div>
+        </div>
+
+        <!-- COMMUNITY POOLS -->
+        <div class="card pools-card">
+          <div class="pools-header">
+            <div class="card-title">
+              👥 Community Pools
+              <span class="badge">Shared Pots · On-Chain</span>
+            </div>
+            <button class="btn btn-ghost" id="createPoolBtn">+ Create Pool</button>
+          </div>
+
+          <div class="pools-grid" id="poolsGrid">
+            <!-- Example pool cards; you can render these dynamically later -->
+            <article class="pool-card">
+              <div class="pool-title">Sunday NFL Mega Pool</div>
+              <div class="pool-meta">
+                <span>Sport: NFL</span>
+                <span>Entry: 0.05 SOL</span>
+              </div>
+              <div class="progress">
+                <div class="progress-bar" style="width: 70%"></div>
+              </div>
+              <div class="pool-meta">
+                <span>14 / 20 entries</span>
+                <span>Prize Pool: 0.70 SOL</span>
+              </div>
+              <div class="pool-footer">
+                <span>Closes in 2h 14m</span>
+                <button class="btn btn-ghost">Join Pool</button>
+              </div>
+            </article>
+
+            <article class="pool-card">
+              <div class="pool-title">Champions League Night Pool</div>
+              <div class="pool-meta">
+                <span>Sport: Soccer</span>
+                <span>Entry: 0.02 SOL</span>
+              </div>
+              <div class="progress">
+                <div class="progress-bar" style="width: 45%"></div>
+              </div>
+              <div class="pool-meta">
+                <span>9 / 20 entries</span>
+                <span>Prize Pool: 0.18 SOL</span>
+              </div>
+              <div class="pool-footer">
+                <span>Closes in 5h 03m</span>
+                <button class="btn btn-ghost">Join Pool</button>
+              </div>
+            </article>
+
+            <article class="pool-card">
+              <div class="pool-title">NBA Late-Night Ladder</div>
+              <div class="pool-meta">
+                <span>Sport: Basketball</span>
+                <span>Entry: 0.03 SOL</span>
+              </div>
+              <div class="progress">
+                <div class="progress-bar" style="width: 30%"></div>
+              </div>
+              <div class="pool-meta">
+                <span>6 / 20 entries</span>
+                <span>Prize Pool: 0.18 SOL</span>
+              </div>
+              <div class="pool-footer">
+                <span>Closes in 7h 40m</span>
+                <button class="btn btn-ghost">Join Pool</button>
+              </div>
+            </article>
+
+            <article class="pool-card">
+              <div class="pool-title">NHL Shot-On-Goal Pool</div>
+              <div class="pool-meta">
+                <span>Sport: Hockey</span>
+                <span>Entry: 0.01 SOL</span>
+              </div>
+              <div class="progress">
+                <div class="progress-bar" style="width: 55%"></div>
+              </div>
+              <div class="pool-meta">
+                <span>11 / 20 entries</span>
+                <span>Prize Pool: 0.11 SOL</span>
+              </div>
+              <div class="pool-footer">
+                <span>Closes in 1h 52m</span>
+                <button class="btn btn-ghost">Join Pool</button>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: Bet Slip -->
+      <aside>
+        <div class="card betslip">
+          <div class="card-header">
+            <div class="card-title">
+              🎟️ Bet Slip
+              <span class="badge" id="betsCountBadge">0 selections</span>
+            </div>
+            <button class="btn-ghost btn" id="clearBetsBtn" style="font-size: 11px;">
+              Clear All
+            </button>
+          </div>
+
+          <div class="betslip-body" id="betslipBody">
+            <div class="betslip-empty" id="betslipEmpty">
+              Select odds from the games list to add them to your slip.
+            </div>
+          </div>
+
+          <div class="betslip-footer">
+            <div class="stake-input">
+              <span>Stake (SOL)</span>
+              <input type="number" id="stakeInput" value="0.10" min="0" step="0.01" />
+            </div>
+            <div class="betslip-totals">
+              <span>Combined Odds</span>
+              <span id="combinedOdds">1.00</span>
+            </div>
+            <div class="betslip-totals">
+              <span>Potential Return</span>
+              <strong id="potentialReturn">0.10 SOL</strong>
+            </div>
+            <button class="btn btn-primary" style="width: 100%; margin-top: 4px;">
+              Place Bet
+            </button>
+          </div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <!-- CREATE POOL MODAL -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal">
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
+        <h3>Create Community Pool</h3>
+        <button class="remove-btn close-modal" id="closeModalBtn">✕</button>
+      </div>
+
+      <div class="modal-row">
+        <label for="poolName">Pool name</label>
+        <input id="poolName" placeholder="Sunday Night Parlay Pool" />
+      </div>
+
+      <div class="modal-row">
+        <label for="poolSport">Sport</label>
+        <select id="poolSport">
+          <option>Soccer</option>
+          <option>NFL</option>
+          <option>Hockey</option>
+          <option>Basketball</option>
+        </select>
+      </div>
+
+      <div class="modal-row">
+        <label for="poolEntry">Entry (SOL)</label>
+        <input id="poolEntry" type="number" value="0.05" min="0" step="0.01" />
+      </div>
+
+      <div class="modal-row">
+        <label for="poolSize">Max entries</label>
+        <input id="poolSize" type="number" value="20" min="2" step="1" />
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-ghost close-modal">Cancel</button>
+        <button class="btn btn-primary" id="savePoolBtn">Save Pool</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --------------------------
+    // Mock game data
+    // --------------------------
+    const gamesBySport = {
+      soccer: [
+        {
+          league: "UEFA Champions League",
+          home: "Real Madrid",
+          away: "Manchester City",
+          time: "Today · 3:00 PM",
+          live: true,
+          odds: { home: 1.95, spread: "-1.5", total: "2.5" },
+        },
+        {
+          league: "Premier League",
+          home: "Liverpool",
+          away: "Arsenal",
+          time: "Today · 5:30 PM",
+          live: false,
+          odds: { home: 2.15, spread: "-0.5", total: "3.0" },
+        },
+      ],
+      nfl: [
+        {
+          league: "NFL Week 7",
+          home: "Dallas Cowboys",
+          away: "Philadelphia Eagles",
+          time: "Sun · 4:25 PM",
+          live: false,
+          odds: { home: 1.85, spread: "-3.5", total: "47.5" },
+        },
+        {
+          league: "NFL Week 7",
+          home: "Kansas City Chiefs",
+          away: "Buffalo Bills",
+          time: "Sun · 8:20 PM",
+          live: false,
+          odds: { home: 1.90, spread: "-2.5", total: "50.0" },
+        },
+      ],
+      hockey: [
+        {
+          league: "NHL Regular Season",
+          home: "Toronto Maple Leafs",
+          away: "Montreal Canadiens",
+          time: "Tonight · 7:00 PM",
+          live: false,
+          odds: { home: 1.75, spread: "-1.5", total: "6.0" },
+        },
+        {
+          league: "NHL Regular Season",
+          home: "Edmonton Oilers",
+          away: "Calgary Flames",
+          time: "Tonight · 9:30 PM",
+          live: false,
+          odds: { home: 1.92, spread: "-1.5", total: "6.5" },
+        },
+      ],
+      basketball: [
+        {
+          league: "NBA",
+          home: "Los Angeles Lakers",
+          away: "Golden State Warriors",
+          time: "Tonight · 10:00 PM",
+          live: false,
+          odds: { home: 2.05, spread: "+3.5", total: "234.5" },
+        },
+        {
+          league: "NBA",
+          home: "Boston Celtics",
+          away: "Miami Heat",
+          time: "Tonight · 7:30 PM",
+          live: false,
+          odds: { home: 1.88, spread: "-4.5", total: "218.0" },
+        },
+      ],
+    };
+
+    const gamesContainer = document.getElementById("gamesContainer");
+    const sportsTabs = document.querySelectorAll(".sports-tab");
+
+    function renderGames(sportKey) {
+      const games = gamesBySport[sportKey] || [];
+      gamesContainer.innerHTML = "";
+
+      games.forEach((g, index) => {
+        const row = document.createElement("article");
+        row.className = "game-row";
+
+        const teams = document.createElement("div");
+        teams.className = "game-teams";
+        teams.innerHTML = `
+          <div class="game-league">${g.league}</div>
+          <div class="team-names">
+            <span>${g.home}</span>
+            <span>vs ${g.away}</span>
+          </div>
+          <div class="game-time">${g.time}</div>
+        `;
+
+        const extra = document.createElement("div");
+        extra.className = "game-extra";
+        extra.innerHTML = `
+          ${
+            g.live
+              ? `<span class="tag-live"><span class="dot-live"></span>LIVE</span>`
+              : ""
+          }
+          <span>Market: Full Game • Moneyline / Spread / Total</span>
+        `;
+
+        const odds = document.createElement("div");
+        odds.className = "game-odds";
+
+        const moneyline = createOddsPill(
+          "Moneyline",
+          g.odds.home,
+          sportKey,
+          index,
+          "ML"
+        );
+        const spread = createOddsPill(
+          "Spread",
+          g.odds.spread,
+          sportKey,
+          index,
+          "SPREAD"
+        );
+        const total = createOddsPill(
+          "Total",
+          g.odds.total,
+          sportKey,
+          index,
+          "TOTAL"
+        );
+
+        odds.appendChild(moneyline);
+        odds.appendChild(spread);
+        odds.appendChild(total);
+
+        row.appendChild(teams);
+        row.appendChild(extra);
+        row.appendChild(odds);
+
+        gamesContainer.appendChild(row);
+      });
+    }
+
+    sportsTabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        sportsTabs.forEach((t) => t.classList.remove("active"));
+        tab.classList.add("active");
+        const sportKey = tab.dataset.sport;
+        renderGames(sportKey);
+      });
+    });
+
+    // --------------------------
+    // Betslip logic
+    // --------------------------
+    const betslipBody = document.getElementById("betslipBody");
+    const betslipEmpty = document.getElementById("betslipEmpty");
+    const betsCountBadge = document.getElementById("betsCountBadge");
+    const clearBetsBtn = document.getElementById("clearBetsBtn");
+    const stakeInput = document.getElementById("stakeInput");
+    const combinedOddsEl = document.getElementById("combinedOdds");
+    const potentialReturnEl = document.getElementById("potentialReturn");
+
+    let selections = [];
+
+    function createOddsPill(label, value, sportKey, gameIndex, marketType) {
+      const pill = document.createElement("button");
+      pill.className = "odds-pill";
+      pill.innerHTML = `
+        <div class="odds-pill-label">${label}</div>
+        <div class="odds-pill-value">${value}</div>
+      `;
+
+      pill.addEventListener("click", () => {
+        // Visual selection toggle
+        pill.classList.toggle("selected");
+
+        const game = gamesBySport[sportKey][gameIndex];
+        const selectionId = `${sportKey}-${gameIndex}-${marketType}`;
+
+        const existingIndex = selections.findIndex((s) => s.id === selectionId);
+        if (existingIndex > -1) {
+          selections.splice(existingIndex, 1);
+        } else {
+          const numericOdds =
+            typeof value === "number" ? value : guessDecimalOdds(value);
+          selections.push({
+            id: selectionId,
+            sport: sportKey,
+            league: game.league,
+            home: game.home,
+            away: game.away,
+            label,
+            value,
+            odds: numericOdds,
+          });
+        }
+
+        renderBetslip();
+      });
+
+      return pill;
+    }
+
+    function guessDecimalOdds(val) {
+      // Very naive helper for non-decimal values (spreads/totals)
+      return 1.9;
+    }
+
+    function renderBetslip() {
+      betslipBody.innerHTML = "";
+      if (!selections.length) {
+        betslipBody.appendChild(betslipEmpty);
+        betsCountBadge.textContent = "0 selections";
+        combinedOddsEl.textContent = "1.00";
+        updatePotentialReturn();
+        return;
+      }
+
+      selections.forEach((s) => {
+        const item = document.createElement("div");
+        item.className = "betslip-item";
+
+        const header = document.createElement("div");
+        header.className = "betslip-item-header";
+        header.innerHTML = `
+          <div class="betslip-item-title">${s.home} vs ${s.away}</div>
+          <button class="remove-btn">✕</button>
+        `;
+
+        header.querySelector(".remove-btn").addEventListener("click", () => {
+          selections = selections.filter((x) => x.id !== s.id);
+          // Also unselect pill visually would require tracking element; skipping for simplicity
+          renderBetslip();
+        });
+
+        const meta = document.createElement("div");
+        meta.className = "betslip-item-meta";
+        meta.innerHTML = `
+          <span>${s.league}</span>
+          <span>${s.label}: <strong>${s.value}</strong></span>
+          <span>Odds: ${s.odds.toFixed(2)}</span>
+        `;
+
+        item.appendChild(header);
+        item.appendChild(meta);
+        betslipBody.appendChild(item);
+      });
+
+      betsCountBadge.textContent =
+        selections.length === 1
+          ? "1 selection"
+          : `${selections.length} selections`;
+
+      const combined = selections.reduce((acc, s) => acc * s.odds, 1);
+      combinedOddsEl.textContent = combined.toFixed(2);
+      updatePotentialReturn();
+    }
+
+    function updatePotentialReturn() {
+      const stake = parseFloat(stakeInput.value || "0");
+      const combined = parseFloat(combinedOddsEl.textContent || "1");
+      const potential = stake * combined;
+      potentialReturnEl.textContent = `${potential.toFixed(2)} SOL`;
+    }
+
+    stakeInput.addEventListener("input", updatePotentialReturn);
+
+    clearBetsBtn.addEventListener("click", () => {
+      selections = [];
+      renderBetslip();
+    });
+
+    // --------------------------
+    // Pools modal
+    // --------------------------
+    const modalBackdrop = document.getElementById("modalBackdrop");
+    const createPoolBtn = document.getElementById("createPoolBtn");
+    const closeModalBtn = document.getElementById("closeModalBtn");
+    const closeModalEls = document.querySelectorAll(".close-modal");
+    const poolsGrid = document.getElementById("poolsGrid");
+
+    createPoolBtn.addEventListener("click", () => {
+      modalBackdrop.style.display = "flex";
+    });
+
+    closeModalEls.forEach((btn) =>
+      btn.addEventListener("click", () => {
+        modalBackdrop.style.display = "none";
+      })
+    );
+
+    modalBackdrop.addEventListener("click", (e) => {
+      if (e.target === modalBackdrop) {
+        modalBackdrop.style.display = "none";
+      }
+    });
+
+    const savePoolBtn = document.getElementById("savePoolBtn");
+    const poolNameInput = document.getElementById("poolName");
+    const poolSportInput = document.getElementById("poolSport");
+    const poolEntryInput = document.getElementById("poolEntry");
+    const poolSizeInput = document.getElementById("poolSize");
+
+    savePoolBtn.addEventListener("click", () => {
+      const name = poolNameInput.value.trim();
+      if (!name) {
+        poolNameInput.focus();
+        return;
+      }
+
+      const sport = poolSportInput.value;
+      const entry = parseFloat(poolEntryInput.value || "0.01");
+      const size = parseInt(poolSizeInput.value || "20", 10);
+
+      const card = document.createElement("article");
+      card.className = "pool-card";
+      card.innerHTML = `
+        <div class="pool-title">${name}</div>
+        <div class="pool-meta">
+          <span>Sport: ${sport}</span>
+          <span>Entry: ${entry.toFixed(2)} SOL</span>
+        </div>
+        <div class="progress">
+          <div class="progress-bar" style="width: 0%"></div>
+        </div>
+        <div class="pool-meta">
+          <span>0 / ${size} entries</span>
+          <span>Prize Pool: 0.00 SOL</span>
+        </div>
+        <div class="pool-footer">
+          <span>Closes soon</span>
+          <button class="btn btn-ghost">Join Pool</button>
+        </div>
+      `;
+
+      poolsGrid.prepend(card);
+
+      // Clear inputs and close
+      poolNameInput.value = "";
+      poolEntryInput.value = "0.05";
+      poolSizeInput.value = "20";
+      modalBackdrop.style.display = "none";
+    });
+
+    // Initial render
+    renderGames("soccer");
+    renderBetslip();
+  </script>
+</body>
+</html>
